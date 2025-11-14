@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration xmlns="https://logging.apache.org/xml/ns"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="
+                   https://logging.apache.org/xml/ns
+                   https://logging.apache.org/xml/ns/log4j-config-2.xsd">
+    <Appenders>
+        <Console name="ConsoleAppender" target="SYSTEM_OUT">
+            <PatternLayout pattern="[%-5level] [%d{dd-MMMM HH:mm:ss}] - %msg%n"/>
+            <Filters>
+                <RegexFilter regex="Type \[oid:\d+, name:.*\] is already mapped" onMatch="DENY" onMismatch="NEUTRAL"/>
+            </Filters>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="ru.rm" level="INFO" additivity="false">
+            <AppenderRef ref="ConsoleAppender"/>
+        </Logger>
+
+        <Root level="WARN" additivity="false">
+            <AppenderRef ref="ConsoleAppender"/>
+        </Root>
+    </Loggers>
+</Configuration>

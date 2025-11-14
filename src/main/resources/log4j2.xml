@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration xmlns="https://logging.apache.org/xml/ns"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="
+                   https://logging.apache.org/xml/ns
+                   https://logging.apache.org/xml/ns/log4j-config-2.xsd">
+    <Properties>
+        <Property name="log-path" value="logs" />
+        <Property name="log-prefix" value="olap-bridge" />
+    </Properties>
+
+    <Appenders>
+        <Console name="ConsoleAppender" target="SYSTEM_OUT">
+            <PatternLayout pattern="[%-5level] [%d{dd-MMMM HH:mm:ss}] - %msg%n"/>
+        </Console>
+        <RollingFile name="FileAppender" fileName="${log-path}/${log-prefix}.log"
+                     filePattern="${log-path}/${log-prefix}-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout pattern="[%-5level] [%d{dd-MMMM HH:mm:ss}] - %msg%n"/>
+            <Filters>
+                <RegexFilter regex="Type \[oid:\d+, name:.*\] is already mapped" onMatch="DENY" onMismatch="NEUTRAL"/>
+            </Filters>
+            <Policies>
+                <TimeBasedTriggeringPolicy modulate="true"/>
+                <SizeBasedTriggeringPolicy size="50 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy>
+                <Delete basePath="${log-path}" maxDepth="1">
+                    <IfFileName glob="${log-prefix}*.log"/>
+                    <IfAccumulatedFileCount exceeds="5"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="ru.rm" level="INFO" additivity="false">
+            <AppenderRef ref="FileAppender"/>
+        </Logger>
+
+        <Root level="WARN" additivity="false">
+            <AppenderRef ref="FileAppender"/>
+        </Root>
+    </Loggers>
+</Configuration>

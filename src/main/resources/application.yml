@@ -1,0 +1,26 @@
+debezium:
+  name: entity-reference-embedded
+  connector.class: io.debezium.connector.postgresql.PostgresConnector
+  plugin.name: pgoutput
+  database:
+    hostname: ${PG_HOSTNAME}
+    port: ${PG_PORT}
+    user: ${PG_USERNAME}
+    password: ${PG_PASSWORD}
+    dbname: ${PG_DBNAME}
+    server.name: db
+  slot.name: finu_slot
+  publication.name: db_publication
+  table.include.list:
+    - finance.accounts
+    - finance.categories
+    - finance.contractors
+    - finance.companies
+    - finance.groups
+    - finance.group_values
+  key.converter.schemas.enable: false
+  value.converter.schemas.enable: false
+  topic.prefix: finu
+  offset.storage: org.apache.kafka.connect.storage.FileOffsetBackingStore
+  offset.storage.file.filename: data/debezium/data/finu_slot.dat
+  offset.flush.interval.ms: 1000
