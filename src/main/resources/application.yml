@@ -10,7 +10,7 @@ debezium:
     dbname: ${PG_DBNAME}
     server.name: db
   slot.name: finu_slot
-  publication.name: db_publication
+  publication.name: reference_publication
   table.include.list:
     - finance.accounts
     - finance.categories
@@ -24,3 +24,5 @@ debezium:
   offset.storage: org.apache.kafka.connect.storage.FileOffsetBackingStore
   offset.storage.file.filename: data/debezium/data/finu_slot.dat
   offset.flush.interval.ms: 1000
+kafka:
+  bootstrap-servers: localhost:9092

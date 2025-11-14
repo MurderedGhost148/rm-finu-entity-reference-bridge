@@ -14,6 +14,7 @@ import java.util.List;
 @Data
 public class AppConfig {
     private DebeziumConfig debezium;
+    private KafkaConfig kafka;
 
     private static AppConfig instance = null;
 
@@ -56,6 +57,13 @@ public class AppConfig {
         private String dbname;
         @JsonProperty("server.name")
         private String serverName;
+    }
+
+    @Data
+    @NoArgsConstructor
+    public static class KafkaConfig {
+        @JsonProperty("bootstrap-servers")
+        private String bootstrapServers;
     }
 
     public static AppConfig load() {
