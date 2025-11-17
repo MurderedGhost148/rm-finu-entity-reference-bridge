@@ -6,6 +6,26 @@ plugins {
 group = 'ru.rm.finu'
 version = '0.0.1-SNAPSHOT'
 
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+jar {
+    manifest {
+        attributes(
+            'Main-Class': 'ru.rm.finu.Main'
+        )
+    }
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
 repositories {
     mavenCentral()
 }
@@ -28,6 +48,12 @@ dependencies {
     implementation 'io.debezium:debezium-connector-postgres:3.3.1.Final'
     implementation 'org.apache.kafka:kafka-clients:4.1.0'
     implementation 'io.debezium:debezium-core:3.3.1.Final'
+}
+
+tasks.withType(Jar).configureEach {
+    archiveBaseName.set("debezium-embedded")
+    archiveVersion.set("")
+    archiveClassifier.set("")
 }
 
 test {
