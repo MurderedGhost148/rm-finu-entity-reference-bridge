@@ -51,7 +51,7 @@ dependencies {
 }
 
 tasks.withType(Jar).configureEach {
-    archiveBaseName.set("debezium-embedded")
+    archiveBaseName.set("entity-reference-bridge")
     archiveVersion.set("")
     archiveClassifier.set("")
 }
