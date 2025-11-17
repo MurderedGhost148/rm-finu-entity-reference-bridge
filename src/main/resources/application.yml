@@ -21,8 +21,9 @@ debezium:
   key.converter.schemas.enable: false
   value.converter.schemas.enable: false
   topic.prefix: finu
-  offset.storage: org.apache.kafka.connect.storage.FileOffsetBackingStore
-  offset.storage.file.filename: data/debezium/data/finu_slot.dat
-  offset.flush.interval.ms: 1000
+  offset.storage: org.apache.kafka.connect.storage.KafkaOffsetBackingStore
+  offset.storage.topic: entity_reference_embedded_offset_storage
+  offset.storage.partitions: 1
+  offset.storage.replication.factor: 1
 kafka:
   bootstrap-servers: localhost:9092

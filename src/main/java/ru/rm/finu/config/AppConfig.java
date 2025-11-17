@@ -41,10 +41,12 @@ public class AppConfig {
         private String topicPrefix;
         @JsonProperty("offset.storage")
         private String offsetStorage;
-        @JsonProperty("offset.storage.file.filename")
-        private String offsetStorageFileFilename;
-        @JsonProperty("offset.flush.interval.ms")
-        private int offsetFlushIntervalMs;
+        @JsonProperty("offset.storage.topic")
+        private String offsetStorageTopic;
+        @JsonProperty("offset.storage.partitions")
+        private int offsetStoragePartitions;
+        @JsonProperty("offset.storage.replication.factor")
+        private int offsetStorageReplicationFactor;
     }
 
     @Data
