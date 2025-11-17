@@ -1,17 +1,17 @@
 [Unit]
-Description=Финучёт Rockmedia: Debezium Embedded
+Description=Финучёт Rockmedia: Entity reference bridge
 Requires=postgresql.service kafka.service
 
 [Service]
 User=root
 WorkingDirectory=/var/www/www-root/data/www/rockmedia.dev/rest/
 EnvironmentFile=/var/www/www-root/data/www/rockmedia.dev/rest/.env
-ExecStart=/usr/bin/java -jar /var/www/www-root/data/www/rockmedia.dev/rest/debezium-embedded.jar
+ExecStart=/usr/bin/java -jar /var/www/www-root/data/www/rockmedia.dev/rest/entity-reference-bridge.jar
 Restart=on-failure
 RestartSec=10
 StandardOutput=journal
 StandardError=journal
-SyslogIdentifier=rm_debezium_embedded
+SyslogIdentifier=rm_entity_reference_bridge
 SuccessExitStatus=0
 
 [Install]
