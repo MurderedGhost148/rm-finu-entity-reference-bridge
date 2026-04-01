@@ -1,8 +1,9 @@
-name: Deploy Bridge Application to Remote Server
+name: Deploy Spring Boot Application to Remote Server
 
 on:
   push:
     branches:
+      - develop
       - main
 
 jobs:
@@ -53,19 +54,36 @@ jobs:
           SERVICE_NAME=$(basename "$SERVICE_FILE" .service)
           echo "SERVICE_NAME=$SERVICE_NAME" >> $GITHUB_ENV
 
+      - name: Set environment variables including SSH key
+        run: |
+          if [ "$GITHUB_REF" = "refs/heads/develop" ]; then
+            echo "REMOTE_USER=${{ secrets.DEV_SSH_USER }}" >> "$GITHUB_ENV"
+            echo "REMOTE_HOST=${{ secrets.DEV_SSH_HOST }}" >> "$GITHUB_ENV"
+            echo "REMOTE_DIR=${{ vars.DEV_REMOTE_APP_DIR }}" >> "$GITHUB_ENV"
+            echo "SSH_KEY<<EOF" >> "$GITHUB_ENV"
+            echo "${{ secrets.DEV_SSH_KEY }}" >> "$GITHUB_ENV"
+            echo "EOF" >> "$GITHUB_ENV"
+          elif [ "$GITHUB_REF" = "refs/heads/main" ]; then
+            echo "REMOTE_USER=${{ secrets.PROD_SSH_USER }}" >> "$GITHUB_ENV"
+            echo "REMOTE_HOST=${{ secrets.PROD_SSH_HOST }}" >> "$GITHUB_ENV"
+            echo "REMOTE_DIR=${{ vars.PROD_REMOTE_APP_DIR }}" >> "$GITHUB_ENV"
+            echo "SSH_KEY<<EOF" >> "$GITHUB_ENV"
+            echo "${{ secrets.PROD_SSH_KEY }}" >> "$GITHUB_ENV"
+            echo "EOF" >> "$GITHUB_ENV"
+          else
+            echo "Branch is not deployable. Exiting."
+            exit 1
+          fi
+
       - name: Configure SSH key
         uses: webfactory/ssh-agent@v0.7.0
         with:
-          ssh-private-key: ${{ secrets.SSH_KEY }}
+          ssh-private-key: ${{ env.SSH_KEY }}
 
       - name: Copy JAR file to remote server
         run: |
-          scp -o StrictHostKeyChecking=no build/libs/*.jar ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ vars.REMOTE_APP_DIR }}
-        env:
-          SSH_KEY: ${{ secrets.SSH_KEY }}
+          scp -o StrictHostKeyChecking=no build/libs/*.jar $REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR
 
       - name: Restart service on remote server
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "sudo systemctl restart ${{ env.SERVICE_NAME }}"
-        env:
-          SSH_KEY: ${{ secrets.SSH_KEY }}
+          ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST "sudo systemctl restart ${{ env.SERVICE_NAME }}"
