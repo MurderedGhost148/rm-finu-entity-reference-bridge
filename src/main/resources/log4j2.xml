@@ -6,7 +6,7 @@
                    https://logging.apache.org/xml/ns/log4j-config-2.xsd">
     <Properties>
         <Property name="log-path" value="logs" />
-        <Property name="log-prefix" value="olap-bridge" />
+        <Property name="log-prefix" value="entity-reference-bridge" />
     </Properties>
 
     <Appenders>
