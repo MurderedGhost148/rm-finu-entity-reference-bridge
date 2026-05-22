@@ -1,7 +1,6 @@
 package ru.rm.finu.lib;
 
 import io.debezium.engine.ChangeEvent;
-import io.debezium.engine.format.Json;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
@@ -29,31 +28,67 @@ public class DebeziumEngine {
                 config.getKafka().getBootstrapServers()
         );
 
-        Properties props = getProperties(config);
-        engine = io.debezium.engine.DebeziumEngine.create(Json.class)
-                .using(props)
-                .notifying(RecordProcessor::process)
-                .build();
-
         executor.submit(() -> {
-            try {
-                engine.run();
-            } catch (Exception e) {
-                log.error("Debezium engine failed", e);
+            long delay = 1000; // старт 1s
+            final long maxDelay = 30000; // максимум 30s
 
-                System.exit(1);
+            while (!Thread.currentThread().isInterrupted()) {
+                try {
+                    log.info("Starting Debezium engine...");
+
+                    engine = createEngine();
+
+                    engine.run();
+
+                    log.warn("Debezium engine stopped normally");
+
+                    delay = 1000;
+                } catch (Exception e) {
+                    log.error("Debezium crashed", e);
+
+                    delay = Math.min(delay * 2, maxDelay);
+                } finally {
+                    try {
+                        if (engine != null) {
+                            engine.close();
+                        }
+                    } catch (Exception e) {
+                        log.warn("Error closing engine", e);
+                    }
+                }
+
+                try {
+                    log.warn("Restarting Debezium in {} ms...", delay);
+                    Thread.sleep(delay);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
             }
         });
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
-                engine.close();
+                if (engine != null) {
+                    engine.close();
+                }
             } catch (IOException e) {
                 log.warn("Debezium engine failed to close: ", e);
             }
 
             executor.shutdown();
         }));
+    }
+
+    private io.debezium.engine.DebeziumEngine<io.debezium.engine.ChangeEvent<String, String>> createEngine() {
+        AppConfig config = AppConfig.load();
+
+        Properties props = getProperties(config);
+
+        return io.debezium.engine.DebeziumEngine.create(io.debezium.engine.format.Json.class)
+                .using(props)
+                .notifying(RecordProcessor::process)
+                .build();
     }
 
     private void createTopicIfNotExists(String topic, String bootstrapServers) {

@@ -40,5 +40,25 @@
         <Root level="WARN" additivity="false">
             <AppenderRef ref="FileAppender"/>
         </Root>
+
+        <Logger name="io.debezium.connector.postgresql" level="WARN" additivity="false">
+            <AppenderRef ref="FileAppender"/>
+        </Logger>
+
+        <Logger name="io.debezium.util.Metronome" level="FATAL" additivity="false">
+            <AppenderRef ref="FileAppender"/>
+        </Logger>
+
+        <Logger name="io.debezium.embedded" level="WARN" additivity="false">
+            <AppenderRef ref="FileAppender"/>
+        </Logger>
+
+        <Logger name="org.postgresql.replication" level="ERROR" additivity="false">
+            <AppenderRef ref="FileAppender"/>
+        </Logger>
+
+        <Logger name="io.debezium.connector.postgresql.connection" level="ERROR" additivity="false">
+            <AppenderRef ref="FileAppender"/>
+        </Logger>
     </Loggers>
 </Configuration>
