@@ -40,6 +40,10 @@ public class DebeziumEngine {
 
                     engine.run();
 
+                    if (Thread.currentThread().isInterrupted()) {
+                        break;
+                    }
+
                     log.warn("Debezium engine stopped normally");
 
                     delay = 1000;
