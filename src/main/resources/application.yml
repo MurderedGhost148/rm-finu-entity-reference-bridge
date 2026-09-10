@@ -18,6 +18,7 @@ debezium:
     - finance.companies
     - finance.groups
     - finance.group_values
+    - finance.projects
   key.converter.schemas.enable: false
   value.converter.schemas.enable: false
   topic.prefix: finu
