@@ -12,7 +12,8 @@ public enum EntityType {
     COMPANY("companies"),
     GROUP("groups"),
     GROUP_VALUE("group_values"),
-    PROJECT("projects");
+    PROJECT("projects"),
+    DOCUMENT("documents");
 
     private final String table;
 
